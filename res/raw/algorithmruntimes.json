@@ -1,0 +1,11 @@
+[
+{ "front":"mergesort (average case)" , "back":"O(n log(n))" }, 
+{ "front":"mergesort (worst case)" , "back":"O(n log(n))" }, 
+{ "front":"quicksort (average case)" , "back":"O(n log(n))"},
+{ "front":"quicksort (worst case)" , "back":"O(n^2)"},
+{ "front":"depth first search" , "back":"O(|E| + |V|)"},
+{ "front":"breadth first search" , "back":"O(|E| + |V|)"},
+{ "front":"binary search" , "back":"O(log n)"},
+{ "front":"dijkstra's" , "back":"O(|E| + |V|log(|V|))"},
+{ "front":"bellman-ford" , "back":"O(|E||V|)"}
+]
