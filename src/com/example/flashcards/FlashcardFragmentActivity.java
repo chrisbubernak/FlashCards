@@ -28,10 +28,15 @@ public class FlashcardFragmentActivity extends FragmentActivity {
 	//the pager adapter which provides the pages to the pager widget
 	private PagerAdapter mPagerAdapter;
 	
+	private String mFlashCardFileName;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	
+		Bundle b = getIntent().getExtras();
+		mFlashCardFileName = b.getString("filename");
+		
 		setContentView(R.layout.activity_screen_slide);
         
 		//instantiate a ViewPager and a PagerAdapter
@@ -39,6 +44,8 @@ public class FlashcardFragmentActivity extends FragmentActivity {
 		mPagerAdapter = new PagerAdapter(getSupportFragmentManager());
 		mPager.setAdapter(mPagerAdapter);
 		mPager.setPageTransformer(true, new DepthPageTransformer());
+		
+
 	}
 
     @Override
@@ -92,7 +99,7 @@ public class FlashcardFragmentActivity extends FragmentActivity {
 		}
 		
 		private void loadCards() throws JSONException, IOException {
-			InputStream inputStream = getResources().openRawResource(R.raw.algorithmruntimes);
+			InputStream inputStream = getAssets().open(mFlashCardFileName);
 			BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
 			StringBuilder total = new StringBuilder();
 			String line;

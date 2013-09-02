@@ -1,0 +1,11 @@
+[
+{ "front":"ls" , "back":"display directory contents" }, 
+{ "front":"tar" , "back":"create, extract, or view a tar archive" }, 
+{ "front":"grep" , "back":"search for a given string"},
+{ "front":"find" , "back":"find a file by file name"},
+{ "front":"ssh" , "back":"login to a remote host"},
+{ "front":"sort" , "back":"sort a file in ascending or descending order"},
+{ "front":"export" , "back":"view or set environment variables"},
+{ "front":"cd" , "back":"changes directory"},
+{ "front":"ps" , "back":"displays information about running processes"}
+]
