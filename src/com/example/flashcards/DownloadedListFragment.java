@@ -2,7 +2,9 @@ package com.example.flashcards;
 
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -25,17 +27,7 @@ public class DownloadedListFragment extends ListFragment {
 	    if (singleton == null){
 	    	singleton = this;
 	    }
-	    getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				datasource.open();
-		    	datasource.deleteDeck(decks.get(arg2));
-				datasource.close();
-				loadFromDB();
-				return true;
-			}
-	    });
+	    getListView().setOnItemLongClickListener(new DownloadedLongClickListener());
 	    loadFromDB();
 	  }
 
@@ -68,5 +60,27 @@ public class DownloadedListFragment extends ListFragment {
 			catch (Exception e) {
 				Log.d("CHRIS", "CHRIS: " + e.getMessage());
 			}
+	  }
+	  
+	  class DownloadedLongClickListener implements OnItemLongClickListener{
+		  public boolean onItemLongClick(AdapterView<?> deck, View view,
+				  final int position, long id) {
+			  new AlertDialog.Builder(getActivity())
+		      	.setTitle("Delete Deck")
+				.setMessage("Are you sure you want to delete this Deck?")
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) { 
+						datasource.open();
+					    datasource.deleteDeck(decks.get(position));
+						datasource.close();
+						loadFromDB();
+				     }
+				})
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) { 
+				    }
+				}).show();
+				return true;
+		  }
 	  }
 }
