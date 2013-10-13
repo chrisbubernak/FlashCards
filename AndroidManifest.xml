@@ -5,11 +5,12 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="12"
         android:targetSdkVersion="17" />
 	
 	<uses-permission android:name="android.permission.INTERNET" />
-    
+
+	
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -26,8 +27,11 @@
         </activity>
         <activity
             android:name="com.example.flashcards.FlashcardFragmentActivity"
-            >
-            
+            >    
+        </activity>
+            <activity
+            android:name="com.example.flashcards.ListFragmentActivity"
+            >    
         </activity>
     </application>
 

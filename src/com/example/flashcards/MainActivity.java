@@ -1,72 +1,103 @@
 package com.example.flashcards;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.content.res.AssetManager;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.GridView;
-import android.widget.Toast;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 
-import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+public class MainActivity extends FragmentActivity{
+    // When requested, this adapter returns a DemoObjectFragment,
+    // representing an object in the collection.
+    ListPagerAdapter mListPagerAdapter;
+    
+    ViewPager mViewPager;
 
+    public void onCreate(Bundle savedInstanceState) {
+        final ActionBar actionBar = getActionBar();
 
-public class MainActivity extends Activity {
-	private MobileServiceClient mClient;
-	private static final String ASSET_SUB_FOLDER = "flashcarddecks";
-	private static final String ASSET_EXTENSION = ".json";
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.activity_main);
-		
-		
-		AssetManager am = getAssets();
-		String[] a = null;
-		try {
-			a = am.list(ASSET_SUB_FOLDER);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		final String [] flashCardDecks = new String[a.length];
-		for(int i=0; i < a.length; i++){
-			flashCardDecks[i] = a[i].substring(0, a[i].length()-ASSET_EXTENSION.length());
-		}
-		
-		GridView gridView = (GridView) findViewById(R.id.gridView);
-		gridView.setAdapter(new ImageAdapter(this, flashCardDecks));
-		
-		gridView.setOnItemClickListener(new OnItemClickListener (){
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_list);
+
+        // ViewPager and its adapters use support library
+        // fragments, so use getSupportFragmentManager.
+        mListPagerAdapter =
+                new ListPagerAdapter(
+                        getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mListPagerAdapter);
+        mViewPager.setOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        // When swiping between pages, select the
+                        // corresponding tab.
+                        getActionBar().setSelectedNavigationItem(position);
+                    }
+                });
+        
+
+        // Specify that tabs should be displayed in the action bar.
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // Create a tab listener that is called when the user changes tabs.
+        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				Intent intent = new Intent(MainActivity.this, FlashcardFragmentActivity.class);
-				intent.putExtra("filename", ASSET_SUB_FOLDER + "/" + flashCardDecks[position] + ASSET_EXTENSION);
-				startActivity(intent);
+			public void onTabReselected(Tab tab,
+					android.app.FragmentTransaction arg1) {
+				// TODO Auto-generated method stub
 			}
-		});
-		
-		gridView.setOnItemLongClickListener(new OnItemLongClickListener (){
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				Toast.makeText(MainActivity.this, "Do you want to remove this deck?", Toast.LENGTH_SHORT).show();
-				return false;
-			}
-		});		
-	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+			@Override
+			public void onTabSelected(Tab tab,
+					android.app.FragmentTransaction arg1) {
+	            	mViewPager.setCurrentItem(tab.getPosition());
+			}
+
+			@Override
+			public void onTabUnselected(Tab tab,
+					android.app.FragmentTransaction arg1) {
+				// TODO Auto-generated method stub	
+			}
+        };
+
+        actionBar.addTab(actionBar.newTab()
+        		.setText("Downloaded")
+                .setTabListener(tabListener));
+        actionBar.addTab(actionBar.newTab()
+        		.setText("Online")
+                .setTabListener(tabListener));
+    }
+
+  public class ListPagerAdapter extends FragmentPagerAdapter {
+   private int NUM_TABS = 2;
+   
+   public ListPagerAdapter(FragmentManager fm) {
+       super(fm);
+   }
+
+   @Override
+   public Fragment getItem(int i) {
+       switch (i){
+	       case 0:
+	    	   return new DownloadedListFragment();
+	       case 1:
+	    	   return new OnlineListFragment();
+   		}
+       //this shouldn't happen...if it does make the app crash
+       return null;
+   }
+
+   @Override
+   public int getCount() {
+       return NUM_TABS;
+   }
+  }
 }
+  
+  
+
+

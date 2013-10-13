@@ -1,14 +1,7 @@
 package com.example.flashcards;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,23 +13,23 @@ import android.view.View;
 import android.widget.TextView;
 
 public class FlashcardFragmentActivity extends FragmentActivity {
-	public ArrayList<Flashcard> flashcards = new ArrayList<Flashcard>();
+	public List<Flashcard> flashcards = new ArrayList<Flashcard>();
 	
 	//the pager widget which handles the animation and swiping
 	private ViewPager mPager;
 	
 	//the pager adapter which provides the pages to the pager widget
 	private PagerAdapter mPagerAdapter;
-	
-	private String mFlashCardFileName;
+	private DataSource datasource;
+	private int mDeckId;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	
 		Bundle b = getIntent().getExtras();
-		mFlashCardFileName = b.getString("filename");
-		
+		mDeckId = b.getInt("deckId");
+		datasource = new DataSource(this);
 		setContentView(R.layout.activity_screen_slide);
         
 		//instantiate a ViewPager and a PagerAdapter
@@ -44,8 +37,6 @@ public class FlashcardFragmentActivity extends FragmentActivity {
 		mPagerAdapter = new PagerAdapter(getSupportFragmentManager());
 		mPager.setAdapter(mPagerAdapter);
 		mPager.setPageTransformer(true, new DepthPageTransformer());
-		
-
 	}
 
     @Override
@@ -71,21 +62,14 @@ public class FlashcardFragmentActivity extends FragmentActivity {
     	}
     }
     
-
-    
+	
 	
 	private class PagerAdapter extends FragmentStatePagerAdapter {
 		public PagerAdapter(FragmentManager fragmentManager) {
 			super(fragmentManager);
-			try {
-				loadCards();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			datasource.open();
+			flashcards = datasource.getFlashcardsForDeck(mDeckId);
+		    datasource.close();
 		}
 
 		@Override 
@@ -96,25 +80,6 @@ public class FlashcardFragmentActivity extends FragmentActivity {
 		@Override
 		public int getCount() {
 			return flashcards.size();
-		}
-		
-		private void loadCards() throws JSONException, IOException {
-			InputStream inputStream = getAssets().open(mFlashCardFileName);
-			BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-			StringBuilder total = new StringBuilder();
-			String line;
-			while ((line = r.readLine()) != null) {
-			    total.append(line);
-			}
-			JSONArray arr = new JSONArray(total.toString());
-			JSONObject tempObj;
-			Flashcard f;
-			flashcards = new ArrayList<Flashcard>();
-			for(int i = 0; i < arr.length(); i++){
-			    tempObj = arr.getJSONObject(i);
-			    f = new Flashcard(tempObj.getString("front"), tempObj.getString("back"));
-			    flashcards.add(f);
-			}			
 		}
 	}
 	

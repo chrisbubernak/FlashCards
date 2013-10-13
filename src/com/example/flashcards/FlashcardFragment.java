@@ -33,8 +33,8 @@ public class FlashcardFragment extends Fragment{
 	    public static FlashcardFragment create(Flashcard f) {
 	        FlashcardFragment fragment = new FlashcardFragment();
 	        Bundle args = new Bundle();
-	        args.putString("front", f.front);
-	        args.putString("back", f.back);
+	        args.putString("front", f.getFront());
+	        args.putString("back", f.getBack());
 	        fragment.setArguments(args);       
 	        return fragment;
 	    }
